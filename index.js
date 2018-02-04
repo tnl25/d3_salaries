@@ -56,12 +56,13 @@ d3.csv('salaries.csv', function(data){
             .attr('stroke','black')
             .attr('stroke-width',1)
             .attr('fill',function (d,i) { return colorScale(i) })
-            .on('mouseover', function () {
+            .on('click', function () {
                 d3.select(this)
                     .transition()
                     .duration(500)
                     .attr('r',10)
                     .attr('stroke-width',2)
+                    .append("title")
                     .text(function(d){return "BasePay: " +  d.BasePay})
                 })
             .on('mouseout', function () {
