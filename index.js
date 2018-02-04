@@ -18,14 +18,18 @@ d3.csv('salaries.csv', function(data){
 	var svg = body.append('svg')
     .attr('height', h + margin.top + margin.bottom)
     .attr('width', w + margin.left + margin.right)
+    .data(data)
+    .enter()
     .append('g')
         .attr('transform','translate(' + margin.left + ',' + margin.top + ')')
     // scales
     var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
-	var xScale = d3.scaleLinear()
+    var xScale = d3.scaleLinear()
+        // set domain to a specific number because the BasePay field has string values
 		.domain([50000,350000])
         .rangeRound([0,w])
-	var yScale = d3.scaleLinear()
+    var yScale = d3.scaleLinear()
+        // set domain to a specific number because the number exists outside of scale
 		.domain([50000,480000])
         .rangeRound([h,0])
     // X-axis
@@ -62,8 +66,13 @@ d3.csv('salaries.csv', function(data){
                     .duration(500)
                     .attr('r',10)
                     .attr('stroke-width',2)
-                    .append("title")
-                    .text(function(d){return "BasePay: " +  d.BasePay})
+                    // .append('text')
+                    //     .text(function(d){
+                    //         str = "Base: $" +  d.BasePay + "Total: $" + d.TotalPay
+                    //         // console.log(str)
+                    //         return str
+                    //     })
+                    //     .style("text-anchor","middle")
                 })
             .on('mouseout', function () {
                 d3.select(this)
@@ -72,6 +81,14 @@ d3.csv('salaries.csv', function(data){
                     .attr('r',5)
                     .attr('stroke-width',1)
             })
+// below append MULTIPLE text on top of each other
+    // var texts = svg.selectAll('p')
+    //     .append('text')
+    //     .text(function(d){
+    //         str = "BasePay: " +  d.BasePay 
+    //         // console.log(str)
+    //         return str
+    //     })
 
     // X-axis
     svg.append('g')
