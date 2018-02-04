@@ -1,18 +1,10 @@
-.chart div {
-  font: 10px sans-serif;
-  background-color: steelblue;
-  text-align: right;
-  padding: 3px;
-  margin: 1px;
-  color: white;
+.axis path,
+.axis line {
+  fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
 }
-
-
-#dashboard {
-  width: 500;
-  border: 1px solid black;
-}
-
-p {
-  text-align: center;
+.axis text {
+	font-family: sans-serif;
+	font-size: 11px;
 }
