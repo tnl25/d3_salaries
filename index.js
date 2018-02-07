@@ -24,7 +24,7 @@ d3.csv("salaries.csv", function(data) {
     })
     .entries(data);
     // console.log(nested_data)
-    console.log(nested_data[0])
+    // console.log(nested_data[0])
     // console.log(nested_data[0]['key'])
     // console.log(nested_data[0]['value']['BasePay'])
     // console.log(nested_data[0]['value']['TotalPay'])
@@ -53,18 +53,19 @@ d3.csv("salaries.csv", function(data) {
   var circles = svg.selectAll("circle")
     .data(nested_data).enter()
     .append("circle")
-//     .attr("cx", function(d) {
-//       // v = xScale(data(i));
-//       // console.log(d.value[0])
-//       // console.log("Total Pay is "+ v + " and " + d3.values(nested_data)[0]);
-//       // console.log("The job is "+ v + " and " + d3.keys(data[i]));
-//       return d.key;
-//     })
-//     .attr("cy", function(d) {
-//       // v = yScale(d.TotalPay);
-//       // console.log("Total Pay is "+ v + " and " + d.TotalPay);
-//       return yScale(d.TotalPay);
-//     })
+    .attr("cx", function(d){
+      // v = nested_data[0]['value']['BasePay']
+      if (d['value']['BasePay'] > 50000){
+        v = d['value']['BasePay']
+        console.log("Base Pay is "+ v)
+        return xScale(v)
+      }
+    })
+    .attr("cy", function(d) {
+      // v = yScale(d.TotalPay);
+      // console.log("Total Pay is "+ v + " and " + d.TotalPay);
+      return yScale(d.TotalPay);
+    })
 //     .attr("r", "5")
 //     .attr("stroke", "black")
 //     .attr("stroke-width", 1)
