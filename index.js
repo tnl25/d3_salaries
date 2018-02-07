@@ -48,9 +48,9 @@ d3.csv("salaries.csv", function(data) {
     .ticks(5);
 
   // nest the data to key-value pair because of duplicate job title
-  var circles = svg.selectAll("circle")
+  var element = svg.selectAll("g")
     .data(nested_data).enter()
-    .append("circle")
+  var circle = element.append("circle")
     .attr("cx", function(d){
       // v = nested_data[0]['value']['BasePay']
       if (d['value']['BasePay'] > 50000 && d['value']['TotalPay'] > 50000){
@@ -73,6 +73,14 @@ d3.csv("salaries.csv", function(data) {
       return colorScale(i);
     })
     .attr("class", "circle")
+
+  var text = element.append("text")
+    .attr("dx", function(d){return -20})
+    .text(function(d){
+      return d['key']
+    })
+
+
     .on("click", function() {
       d3.select(this)
         .transition()
