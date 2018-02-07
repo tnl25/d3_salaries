@@ -10,13 +10,13 @@ d3.csv("salaries.csv", function(data) {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
   var nested_data = d3.nest()
     .key(function(d){
+      // filter by the most recent year and use JobTitle as key
       return (d.Year = 2014, d.JobTitle);
     })
     .rollup(function(v){
         // console.log(v)
         // console.log(v[0]['BasePay'])
         return {
-          // JobTitle: v[0]['JobTitle'],
           BasePay: d3.mean(v, function(d) {return d.BasePay}),
           TotalPay: d3.mean(v, function(d){return d.TotalPay}),
           Year: v[0]['Year']
@@ -27,11 +27,9 @@ d3.csv("salaries.csv", function(data) {
     // console.log(nested_data[0])
     // console.log(nested_data[0]['key'])
     // console.log(nested_data[0]['value']['BasePay'])
-    // console.log(nested_data[0]['value']['TotalPay'])
 
   // scales
   var colorScale = d3.scaleOrdinal(d3.schemeCategory20)
-  // var colorScale = d3.scaleSequential(d3.interpolateRainbow);
   var xScale = d3.scaleLinear()
     // set domain to a specific number because the BasePay field has string values
     .domain([50000, 350000])
@@ -55,62 +53,64 @@ d3.csv("salaries.csv", function(data) {
     .append("circle")
     .attr("cx", function(d){
       // v = nested_data[0]['value']['BasePay']
-      if (d['value']['BasePay'] > 50000){
+      if (d['value']['BasePay'] > 50000 && d['value']['TotalPay'] > 50000){
         v = d['value']['BasePay']
-        console.log("Base Pay is "+ v)
+        // console.log("Base Pay is "+ v)
         return xScale(v)
       }
     })
     .attr("cy", function(d) {
-      // v = yScale(d.TotalPay);
-      // console.log("Total Pay is "+ v + " and " + d.TotalPay);
-      return yScale(d.TotalPay);
+      if (d['value']['BasePay'] > 50000 && d['value']['TotalPay'] > 50000){
+        v = d['value']['TotalPay']
+        // console.log("Total Pay is "+ v)
+        return yScale(v)
+      }
     })
-//     .attr("r", "5")
-//     .attr("stroke", "black")
-//     .attr("stroke-width", 1)
-//     .attr("fill", function(d, i) {
-//       return colorScale(i);
-//     })
-//     .attr("class", "circle")
-//     .on("click", function() {
-//       d3.select(this)
-//         .transition()
-//         .duration(500)
-//         .attr("r", 10)
-//         .attr("stroke-width", 2);
-//     })
-//     .on("mouseout", function() {
-//       d3.select(this)
-//         .transition()
-//         .duration(500)
-//         .attr("r", 5)
-//         .attr("stroke-width", 1);
-//     });
+    .attr("r", "5")
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("fill", function(d, i) {
+      return colorScale(i);
+    })
+    .attr("class", "circle")
+    .on("click", function() {
+      d3.select(this)
+        .transition()
+        .duration(500)
+        .attr("r", 10)
+        .attr("stroke-width", 2)
+    })
+    .on("mouseout", function() {
+      d3.select(this)
+        .transition()
+        .duration(500)
+        .attr("r", 5)
+        .attr("stroke-width", 1);
+    });
 
-//   // X-axis
-//   svg.append("g")
-//     .attr("class", "axis")
-//     .attr("transform", "translate(0," + h + ")")
-//     .call(xAxis)
-//     .append("text") 
-//     .attr("class", "label")
-//     .text("Base Pay")
-//     .attr("y", -50)
-//     .attr("x", w)
-//     .attr("dy", ".71em")
-//     .style("text-anchor", "end");
+  // X-axis
+  svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + h + ")")
+    .call(xAxis)
+    .append("text") 
+    .attr("class", "label")
+    .text("Base Pay")
+    .attr("y", -50)
+    .attr("x", w)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end");
 
-//   // Y-axis
-//   svg.append("g")
-//     .attr("class", "axis")
-//     .call(yAxis)
-//     .append("text") 
-//     .attr("class", "label")
-//     .attr("transform", "rotate(-90)")
-//     .attr("x", 0)
-//     .attr("y", 5)
-//     .attr("dy", ".71em")
-//     .style("text-anchor", "end")
-//     .text("Total Pay");
+  // Y-axis
+  svg.append("g")
+    .attr("class", "axis")
+    .call(yAxis)
+    .append("text") 
+    .attr("class", "label")
+    .attr("transform", "rotate(-90)")
+    .attr("x", 0)
+    .attr("y", 5)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .text("Total Pay");
 })
