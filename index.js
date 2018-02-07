@@ -14,15 +14,17 @@ d3.csv("salaries.csv", function(data) {
     })
     .rollup(function(v){
         // console.log(v)
-        console.log(v[0]['BasePay'])
+        // console.log(v[0]['BasePay'])
         return {
+          // JobTitle: v[0]['JobTitle'],
           BasePay: d3.mean(v, function(d) {return d.BasePay}),
           TotalPay: d3.mean(v, function(d){return d.TotalPay}),
+          Year: v[0]['Year']
       }
     })
     .entries(data);
     // console.log(nested_data)
-    // console.log(nested_data[0])
+    console.log(nested_data[0])
     // console.log(nested_data[0]['key'])
     // console.log(nested_data[0]['value']['BasePay'])
     // console.log(nested_data[0]['value']['TotalPay'])
