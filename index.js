@@ -31,11 +31,11 @@ d3.csv("salaries.csv", function(data) {
   var colorScale = d3.scaleOrdinal(d3.schemeCategory20)
   var xScale = d3.scaleLinear()
     // set domain to a specific number because the BasePay field has string values
-    .domain([50000, 350000])
+    .domain([75000, 350000])
     .rangeRound([0, w]);
   var yScale = d3.scaleLinear()
     // set domain to a specific number because the number exists outside of scale
-    .domain([50000, 480000])
+    .domain([75000, 480000])
     .rangeRound([h, 0]);
 
   // X-axis
@@ -89,14 +89,14 @@ d3.csv("salaries.csv", function(data) {
 
   var circleAttributes = circle
     .attr("cx", function(d){
-      if (d['value']['BasePay'] > 50000 && d['value']['TotalPay'] > 50000){
+      if (d['value']['BasePay'] > 75000 && d['value']['TotalPay'] > 100000){
         v = d['value']['BasePay']
         // console.log("Base Pay is "+ v)
         return xScale(v)
       }
     })
     .attr("cy", function(d) {
-      if (d['value']['BasePay'] > 50000 && d['value']['TotalPay'] > 50000){
+      if (d['value']['BasePay'] > 75000 && d['value']['TotalPay'] > 100000){
         v = d['value']['TotalPay']
         // console.log("Total Pay is "+ v)
         return yScale(v)
@@ -135,6 +135,8 @@ d3.csv("salaries.csv", function(data) {
         let val = [jobTitle,basePay,totalPay]
         return jobTitle;
       })
+      .style("text-transform","lowercase")
+      .style("font-variant","small-caps")
       .attr("id", function(i){
         return "text" + i;
       })
