@@ -2,12 +2,13 @@ d3.csv("salaries.csv", function(data) {
   var margin = { top: 50, right: 50, left: 50, bottom: 50 };
   var h = 700 - margin.top - margin.bottom;
   var w = 1024 - margin.left - margin.right;
-  var body = d3.select("body")
-  var svg = body.append("svg")
+  var plotArea = d3.select("#chart")
+  var svg = plotArea.append("svg")
     .attr("height", h + margin.top + margin.bottom)
     .attr("width", w + margin.left + margin.right)
     .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
   var nested_data = d3.nest()
     .key(function(d){
       // filter by the most recent year and use JobTitle as key
@@ -23,8 +24,6 @@ d3.csv("salaries.csv", function(data) {
       }
     })
     .entries(data);
-    // console.log(nested_data)
-    // console.log(nested_data[0])
     // console.log(nested_data[0]['key'])
     // console.log(nested_data[0]['value']['BasePay'])
 
@@ -38,6 +37,7 @@ d3.csv("salaries.csv", function(data) {
     // set domain to a specific number because the number exists outside of scale
     .domain([50000, 480000])
     .rangeRound([h, 0]);
+
   // X-axis
   var xAxis = d3.axisBottom()
     .scale(xScale)
@@ -47,12 +47,47 @@ d3.csv("salaries.csv", function(data) {
     .scale(yScale)
     .ticks(5);
 
-  // nest the data to key-value pair because of duplicate job title
-  var element = svg.selectAll("g")
-    .data(nested_data).enter()
+  // X-axis
+  svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + h + ")")
+    .call(xAxis)
 
-  var circles = element.append("circle").attr("class", "circle")
-  var circlesAttributes = circles
+  svg.append("text") 
+    .attr("class", "label")
+    .attr("transform", "translate(" + (w / 2) + " ," + (h + margin.bottom) + ")")
+    .text("Base Pay")
+    .attr("dy", "1em")
+    .style("text-anchor", "middle");
+
+  // Y-axis
+  svg.append("g")
+    .attr("class", "axis")
+    .call(yAxis)
+
+  svg.append("text")
+    .attr("class", "label")
+    .attr("transform", "rotate(-90)")
+    .attr("x", 0 - (h/2))
+    .attr("y", 0 - margin.left)
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("Total Pay");
+
+  var circles = svg
+    .append("g")
+    .attr("class","circles")
+    
+  var circle = circles
+    .append("g")
+    .attr("class", "circle-group")
+    .selectAll("circle")
+    .data(nested_data)
+    .enter()
+    .append("circle")
+    .attr("class", "circle")
+
+  var circleAttributes = circle
     .attr("cx", function(d){
       if (d['value']['BasePay'] > 50000 && d['value']['TotalPay'] > 50000){
         v = d['value']['BasePay']
@@ -67,77 +102,54 @@ d3.csv("salaries.csv", function(data) {
         return yScale(v)
       }
     })
+    .attr("id",function(d, i){
+      return "circle" + i;
+    })
     .attr("r","5")
     .attr("stroke", "black")
     .attr("stroke-width", 1)
     .attr("fill", function(d, i) {
       return colorScale(i);
     })
+    .on("mouseover",handleMouseOver)
+    .on("mouseout",handleMouseOut)
 
-    .on("click",handleClick)
-    .on("onmouseout",handleMouseOut)
-
-  function handleClick(d){
+  
+  function handleMouseOver(d){
     d3.select(this)
       .transition()
-      .duration(500)
+      .duration(700)
       .attr("r", 20)
       .attr("stroke-width", 2)
-    element.append("text")
-      .attr("x", function(d){
-        dx = d['value']['BasePay']
-        return xScale(dx)
+   
+    circles.select(".circle-group")
+      .data(nested_data)
+      .append("text")
+      .attr("class", "circle-text")
+      .attr("x", xScale(d['value']['BasePay'] ))
+      .attr("y", yScale(d['value']['TotalPay']))
+      .text(function(){
+        jobTitle = d['key'];
+        basePay = d['value']['BasePay'];
+        totalPay = d['value']['TotalPay'];
+        let val = [jobTitle,basePay,totalPay]
+        return jobTitle;
       })
-      .attr("y",function(d){
-        dy = d['value']['TotalPay']
-        return yScale(dy)
+      .attr("id", function(i){
+        return "text" + i;
       })
-      .text(function(d){
-        if (d['value']['BasePay'] > 100000 && d['value']['TotalPay'] > 100000){
-        jobTitle = d['key']
-        // console.log(jobTitle)
-        basePay = d['value']['BasePay']
-        // console.log(basePay)
-        totalPay = d['value']['TotalPay']
-        // console.log(totalPay)
-        val = [jobTitle,basePay,totalPay]
-        console.log(val)
-        return val
-        }
-      })
+
+
   }
-  function handleMouseOut(d){
+  function handleMouseOut(d,i){
     d3.select(this)
       .transition()
-      .duration(500)
+      .duration(1000)
       .attr("r", 5)
       .attr("stroke-width", 1)
+    
+    circles.selectAll(".circle-text").remove();
   }
-
-  // X-axis
-  svg.append("g")
-    .attr("class", "axis")
-    .attr("transform", "translate(0," + h + ")")
-    .call(xAxis)
-    .append("text") 
-    .attr("class", "label")
-    .text("Base Pay")
-    .attr("y", -50)
-    .attr("x", w)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end");
-
-  // Y-axis
-  svg.append("g")
-    .attr("class", "axis")
-    .call(yAxis)
-    .attr("class", "label")
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("x", 0)
-    .attr("y", 5)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end")
-    .text("Total Pay");
+  
 })
 

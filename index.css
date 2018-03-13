@@ -7,8 +7,13 @@
 .axis text {
 	font-family: sans-serif;
 	font-size: 12px;
+	z-index:100;
 }
 svg{
 	margin:0 auto;
-	padding: 20px 20px;
+	padding: 50px 50px 50px 50px;
+}
+#plotArea{
+	margin:0 auto;
+	width:100%;
 }
