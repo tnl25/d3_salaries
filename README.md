@@ -1,5 +1,9 @@
-# d3_v01_2018
-D3 Exercise 1
+# D3 Practice - Scatter Plot
+D3 Exercise - Scatter Plot for Salaries in 2014
+
+Dataset from Kaggle: Salaries.csv
+
+D3 Version: d3.v4
 
 STEP 1: Install http-server
 
