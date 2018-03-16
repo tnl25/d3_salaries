@@ -77,6 +77,14 @@ d3.csv("salaries.csv", function(data) {
   var circles = svg
     .append("g")
     .attr("class","circles")
+
+  var textBox = d3.select('.circles')
+    .append('text')
+    .attr('class', 'legend-title')
+    .text('Job (base salary, total compensation) - in USD')
+    .style('text-transform', 'uppercase')
+    .attr('x', 100)
+    .attr('y', 0);
     
   var circle = circles
     .append("g")
@@ -119,28 +127,32 @@ d3.csv("salaries.csv", function(data) {
     d3.select(this)
       .transition()
       .duration(700)
-      .attr("r", 20)
+      .attr("r", 15)
       .attr("stroke-width", 2)
-   
+
+    /** put the data in the middle */
     circles.select(".circle-group")
       .data(nested_data)
       .append("text")
       .attr("class", "circle-text")
-      .attr("x", xScale(d['value']['BasePay'] ))
-      .attr("y", yScale(d['value']['TotalPay']))
+      // .attr("x", xScale(d['value']['BasePay'] ))
+      // .attr("y", yScale(d['value']['TotalPay']))
+      .attr('x', 100)
+      .attr('y', 20)
       .text(function(){
         jobTitle = d['key'];
-        basePay = d['value']['BasePay'];
-        totalPay = d['value']['TotalPay'];
-        let val = [jobTitle,basePay,totalPay]
-        return jobTitle;
+        basePay = Math.round(d['value']['BasePay'],2);
+        totalPay = Math.round(d['value']['TotalPay'],2);
+        let val = jobTitle + ' ( $' + basePay + ' , $' + totalPay + ')';
+        return val;
       })
-      .style("text-transform","lowercase")
-      .style("font-variant","small-caps")
       .attr("id", function(i){
         return "text" + i;
       })
-
+      .style("text-transform","lowercase")
+      .style("font-variant","small-caps")
+      .style('font-size', 15)
+  
 
   }
   function handleMouseOut(d,i){
